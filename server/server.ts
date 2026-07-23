@@ -26,7 +26,7 @@ let db: pg.Pool | null = null
 
 if (DATABASE_URL) {
   db = new pg.Pool({ connectionString: DATABASE_URL })
-  db.query(\`
+  db.query(`
     CREATE TABLE IF NOT EXISTS articles (
       id SERIAL PRIMARY KEY,
       title TEXT NOT NULL DEFAULT '',
@@ -38,8 +38,7 @@ if (DATABASE_URL) {
       published BOOLEAN NOT NULL DEFAULT true,
       created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    )
-  \`).catch(e => { console.error('数据库初始化失败:', e.message); db = null })
+    )').catch(e => { console.error('数据库初始化失败:', e.message); db = null })
   console.log('✓ 使用 PostgreSQL')
 } else {
   console.log('✓ 无数据库，仅提供静态文件服务')
@@ -168,9 +167,9 @@ app.use((_req, res) => {
 
 const PORT = parseInt(process.env.PORT || '3000')
 app.listen(PORT, () => {
-  console.log(\`\u2713 \u670d\u52a1\u5668\u8fd0\u884c\u5728 http://localhost:\${PORT}\`)
-  console.log(\`  \u7ba1\u7406\u540e\u53f0: http://localhost:\${PORT}/admin\`)
-  console.log(\`  \u5bc6\u7801: \${ADMIN_PASSWORD}\`)
+  console.log(`\u2713 \u670d\u52a1\u5668\u8fd0\u884c\u5728 http://localhost:\${PORT}`)
+  console.log(`  \u7ba1\u7406\u540e\u53f0: http://localhost:\${PORT}/admin`)
+  console.log(`  \u5bc6\u7801: \${ADMIN_PASSWORD}`)
   if (db) console.log('  \u6570\u636e\u5e93: PostgreSQL')
   else console.log('  \u6570\u636e\u5e93: \u672a\u8fde\u63a5')
 })
