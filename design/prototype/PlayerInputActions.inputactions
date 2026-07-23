@@ -1,0 +1,115 @@
+{
+    "name": "PlayerInputActions",
+    "maps": [
+        {
+            "name": "Gameplay",
+            "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+            "actions": [
+                {
+                    "name": "Move",
+                    "type": "Value",
+                    "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "LightAttack",
+                    "type": "Button",
+                    "id": "c3d4e5f6-a7b8-9012-cdef-123456789012",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "HeavyAttack",
+                    "type": "Button",
+                    "id": "d4e5f6a7-b8c9-0123-defa-234567890123",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Block",
+                    "type": "Button",
+                    "id": "e5f6a7b8-c9d0-1234-efab-345678901234",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Dash",
+                    "type": "Button",
+                    "id": "f6a7b8c9-d0e1-2345-fabc-456789012345",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Jump",
+                    "type": "Button",
+                    "id": "a7b8c9d0-e1f2-3456-abcd-567890123456",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Heal",
+                    "type": "Button",
+                    "id": "b8c9d0e1-f2a3-4567-bcde-678901234567",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Interact",
+                    "type": "Button",
+                    "id": "c9d0e1f2-a3b4-5678-cdef-789012345678",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                },
+                {
+                    "name": "Pause",
+                    "type": "Button",
+                    "id": "d0e1f2a3-b4c5-6789-defa-890123456789",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {"name": "W", "id": "e1f2a3b4-c5d6-789a-efab-901234567890", "path": "<Keyboard>/w", "interactions": "", "processors": "", "groups": "Keyboard", "action": "Move", "isComposite": false, "isPartOfComposite": true},
+                {"name": "A", "id": "f2a3b4c5-d6e7-89ab-fabc-012345678901", "path": "<Keyboard>/s", "interactions": "", "processors": "", "groups": "Keyboard", "action": "Move", "isComposite": false, "isPartOfComposite": true},
+                {"name": "S", "id": "a3b4c5d6-e7f8-9abc-abcd-123456789012", "path": "<Keyboard>/a", "interactions": "", "processors": "", "groups": "Keyboard", "action": "Move", "isComposite": false, "isPartOfComposite": true},
+                {"name": "D", "id": "b4c5d6e7-f8a9-bcda-bcde-234567890123", "path": "<Keyboard>/d", "interactions": "", "processors": "", "groups": "Keyboard", "action": "Move", "isComposite": false, "isPartOfComposite": true},
+                {"name": "WASD", "id": "c5d6e7f8-a9b0-cdeb-cdef-345678901234", "path": "<Keyboard>/w", "interactions": "", "processors": "", "groups": "Keyboard", "action": "Move", "isComposite": true, "isPartOfComposite": false},
+                {"name": "upArrow", "id": "d6e7f8a9-b0c1-defa-defa-456789012345", "path": "<Keyboard>/upArrow", "interactions": "", "processors": "", "groups": "Keyboard", "action": "Move", "isComposite": false, "isPartOfComposite": true},
+                {"name": "downArrow", "id": "e7f8a9b0-c1d2-efab-efab-567890123456", "path": "<Keyboard>/downArrow", "interactions": "", "processors": "", "groups": "Keyboard", "action": "Move", "isComposite": false, "isPartOfComposite": true},
+                {"name": "leftArrow", "id": "f8a9b0c1-d2e3-fabc-fabc-678901234567", "path": "<Keyboard>/leftArrow", "interactions": "", "processors": "", "groups": "Keyboard", "action": "Move", "isComposite": false, "isPartOfComposite": true},
+                {"name": "rightArrow", "id": "a9b0c1d2-e3f4-abcd-abcd-789012345678", "path": "<Keyboard>/rightArrow", "interactions": "", "processors": "", "groups": "Keyboard", "action": "Move", "isComposite": false, "isPartOfComposite": true},
+                {"name": "ArrowKeys", "id": "b0c1d2e3-f4a5-bcda-bcde-890123456789", "path": "<Keyboard>/leftArrow", "interactions": "", "processors": "", "groups": "Keyboard", "action": "Move", "isComposite": true, "isPartOfComposite": false},
+                {"name": "", "id": "c1d2e3f4-a5b6-cdeb-cdef-901234567890", "path": "<Mouse>/leftButton", "interactions": "", "processors": "", "groups": "Keyboard", "action": "LightAttack", "isComposite": false, "isPartOfComposite": false},
+                {"name": "", "id": "d2e3f4a5-b6c7-defa-defa-012345678901", "path": "<Keyboard>/z", "interactions": "", "processors": "", "groups": "Keyboard", "action": "LightAttack", "isComposite": false, "isPartOfComposite": false},
+                {"name": "", "id": "e3f4a5b6-c7d8-efab-efab-123456789012", "path": "<Mouse>/rightButton", "interactions": "", "processors": "", "groups": "Keyboard", "action": "HeavyAttack", "isComposite": false, "isPartOfComposite": false},
+                {"name": "", "id": "f4a5b6c7-d8e9-fabc-fabc-234567890123", "path": "<Keyboard>/x", "interactions": "", "processors": "", "groups": "Keyboard", "action": "HeavyAttack", "isComposite": false, "isPartOfComposite": false},
+                {"name": "", "id": "a5b6c7d8-e9f0-abcd-abcd-345678901234", "path": "<Keyboard>/shift", "interactions": "", "processors": "", "groups": "Keyboard", "action": "Block", "isComposite": false, "isPartOfComposite": false},
+                {"name": "", "id": "b6c7d8e9-f0a1-bcda-bcde-456789012345", "path": "<Keyboard>/c", "interactions": "", "processors": "", "groups": "Keyboard", "action": "Block", "isComposite": false, "isPartOfComposite": false},
+                {"name": "", "id": "c7d8e9f0-a1b2-cdeb-cdef-567890123456", "path": "<Keyboard>/space", "interactions": "", "processors": "", "groups": "Keyboard", "action": "Dash", "isComposite": false, "isPartOfComposite": false},
+                {"name": "", "id": "d8e9f0a1-b2c3-defa-defa-678901234567", "path": "<Keyboard>/leftShift", "interactions": "", "processors": "", "groups": "Keyboard", "action": "Dash", "isComposite": false, "isPartOfComposite": false},
+                {"name": "", "id": "e9f0a1b2-c3d4-efab-efab-789012345678", "path": "<Keyboard>/w", "interactions": "", "processors": "", "groups": "Keyboard", "action": "Jump", "isComposite": false, "isPartOfComposite": false},
+                {"name": "", "id": "f0a1b2c3-d4e5-fabc-fabc-890123456789", "path": "<Keyboard>/space", "interactions": "", "processors": "", "groups": "Keyboard", "action": "Jump", "isComposite": false, "isPartOfComposite": false},
+                {"name": "", "id": "a1b2c3d4-e5f6-abcd-abcd-901234567890", "path": "<Keyboard>/e", "interactions": "", "processors": "", "groups": "Keyboard", "action": "Heal", "isComposite": false, "isPartOfComposite": false},
+                {"name": "", "id": "b2c3d4e5-f6a7-bcda-bcde-012345678901", "path": "<Keyboard>/q", "interactions": "", "processors": "", "groups": "Keyboard", "action": "Heal", "isComposite": false, "isPartOfComposite": false},
+                {"name": "", "id": "c3d4e5f6-a7b8-cdeb-cdef-123456789012", "path": "<Keyboard>/f", "interactions": "", "processors": "", "groups": "Keyboard", "action": "Interact", "isComposite": false, "isPartOfComposite": false},
+                {"name": "", "id": "d4e5f6a7-b8c9-defa-defa-234567890123", "path": "<Keyboard>/escape", "interactions": "", "processors": "", "groups": "Keyboard", "action": "Pause", "isComposite": false, "isPartOfComposite": false}
+            ]
+        }
+    ],
+    "controlSchemes": [
+        {
+            "name": "Keyboard",
+            "bindingGroups": "Keyboard"
+        }
+    ]
+}
