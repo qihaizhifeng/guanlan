@@ -26,19 +26,7 @@ let db: pg.Pool | null = null
 
 if (DATABASE_URL) {
   db = new pg.Pool({ connectionString: DATABASE_URL })
-  db.query(`
-    CREATE TABLE IF NOT EXISTS articles (
-      id SERIAL PRIMARY KEY,
-      title TEXT NOT NULL DEFAULT '',
-      subtitle TEXT NOT NULL DEFAULT '',
-      date TEXT NOT NULL DEFAULT '',
-      category TEXT NOT NULL DEFAULT '随笔',
-      excerpt TEXT NOT NULL DEFAULT '',
-      content TEXT NOT NULL DEFAULT '',
-      published BOOLEAN NOT NULL DEFAULT true,
-      created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-      updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
-    )').catch(e => { console.error('数据库初始化失败:', e.message); db = null })
+  db.query(`CREATE TABLE IF NOT EXISTS articles (id SERIAL PRIMARY KEY,title TEXT DEFAULT '',subtitle TEXT DEFAULT '',date TEXT DEFAULT '',category TEXT DEFAULT '随笔',excerpt TEXT DEFAULT '',content TEXT DEFAULT '',published BOOLEAN DEFAULT true,created_at TIMESTAMPTZ DEFAULT NOW(),updated_at TIMESTAMPTZ DEFAULT NOW())`).catch(e => { console.error('DB init failed:', e.message); db = null })
   console.log('✓ 使用 PostgreSQL')
 } else {
   console.log('✓ 无数据库，仅提供静态文件服务')
@@ -170,6 +158,6 @@ app.listen(PORT, () => {
   console.log('Running at http://localhost:' + PORT)
   console.log('Admin: http://localhost:' + PORT + '/admin')
   console.log('Password: ' + ADMIN_PASSWORD)
-  if (db) console.log('  \u6570\u636e\u5e93: PostgreSQL')
-  else console.log('  \u6570\u636e\u5e93: \u672a\u8fde\u63a5')
+  if (db) console.log('  Database: PostgreSQL')
+  else console.log('  Database: not connected')
 })
