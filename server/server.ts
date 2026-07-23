@@ -1,6 +1,6 @@
 import express from 'express'
 import cors from 'cors'
-import { existsSync, mkdirSync } from 'fs'
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { join, dirname } from 'path'
 import { fileURLToPath } from 'url'
 import multer from 'multer'
@@ -14,6 +14,7 @@ const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || 'guanlan2024'
 const DATABASE_URL = process.env.DATABASE_URL || ''
 
 const UPLOADS_PATH = join(DATA_DIR, 'uploads')
+const ARTICLES_PATH = join(DATA_DIR, 'articles.json')
 
 if (!existsSync(UPLOADS_PATH)) mkdirSync(UPLOADS_PATH, { recursive: true })
 
@@ -47,7 +48,11 @@ app.get('/api/articles', async (_req, res) => {
     const result = await db.query('SELECT * FROM articles WHERE published = true ORDER BY id DESC')
     res.json(result.rows)
   } else {
-    res.json([])
+    // JSON file fallback
+    try {
+      const data = JSON.parse(readFileSync(ARTICLES_PATH, 'utf-8'))
+      res.json(data.filter((a: any) => a.published !== false))
+    } catch { res.json([]) }
   }
 })
 
@@ -67,7 +72,10 @@ app.get('/api/admin/articles', auth, async (_req, res) => {
     const result = await db.query('SELECT * FROM articles ORDER BY id DESC')
     res.json(result.rows)
   } else {
-    res.json([])
+    try {
+      const data = JSON.parse(readFileSync(ARTICLES_PATH, 'utf-8'))
+      res.json(data)
+    } catch { res.json([]) }
   }
 })
 
@@ -89,7 +97,19 @@ app.post('/api/admin/articles', auth, async (req, res) => {
 })
 
 app.put('/api/admin/articles/:id', auth, async (req, res) => {
-  if (!db) return res.status(500).json({ error: '\u6570\u636e\u5e93\u672a\u8fde\u63a5' })
+  if (!db) {
+    try {
+      const id = parseInt(req.params.id)
+      const data = JSON.parse(readFileSync(ARTICLES_PATH, 'utf-8'))
+      const idx = data.findIndex((a: any) => a.id === id)
+      if (idx === -1) return res.status(404).json({ error: '\u6587\u7ae0\u4e0d\u5b58\u5728' })
+      data[idx] = { ...data[idx], ...req.body, id, updated_at: new Date().toISOString() }
+      writeFileSync(ARTICLES_PATH, JSON.stringify(data, null, 2), 'utf-8')
+      return res.json(data[idx])
+    } catch (e) {
+      return res.status(500).json({ error: 'Failed to update' })
+    }
+  }
   const id = parseInt(req.params.id)
   const result = await db.query(
     'UPDATE articles SET title=$1,subtitle=$2,date=$3,category=$4,excerpt=$5,content=$6,published=$7,updated_at=NOW() WHERE id=$8 RETURNING *',
@@ -109,7 +129,18 @@ app.put('/api/admin/articles/:id', auth, async (req, res) => {
 })
 
 app.delete('/api/admin/articles/:id', auth, async (req, res) => {
-  if (!db) return res.status(500).json({ error: '\u6570\u636e\u5e93\u672a\u8fde\u63a5' })
+  if (!db) {
+    try {
+      const id = parseInt(req.params.id)
+      const data = JSON.parse(readFileSync(ARTICLES_PATH, 'utf-8'))
+      const filtered = data.filter((a: any) => a.id !== id)
+      if (filtered.length === data.length) return res.status(404).json({ error: '\u6587\u7ae0\u4e0d\u5b58\u5728' })
+      writeFileSync(ARTICLES_PATH, JSON.stringify(filtered, null, 2), 'utf-8')
+      return res.json({ success: true })
+    } catch (e) {
+      return res.status(500).json({ error: 'Failed to delete' })
+    }
+  }
   const id = parseInt(req.params.id)
   const result = await db.query('DELETE FROM articles WHERE id=$1 RETURNING id', [id])
   if (result.rows.length === 0) return res.status(404).json({ error: '\u6587\u7ae0\u4e0d\u5b58\u5728' })
