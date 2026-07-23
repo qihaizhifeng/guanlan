@@ -167,9 +167,9 @@ app.use((_req, res) => {
 
 const PORT = parseInt(process.env.PORT || '3000')
 app.listen(PORT, () => {
-  console.log(`\u2713 \u670d\u52a1\u5668\u8fd0\u884c\u5728 http://localhost:\${PORT}`)
-  console.log(`  \u7ba1\u7406\u540e\u53f0: http://localhost:\${PORT}/admin`)
-  console.log(`  \u5bc6\u7801: \${ADMIN_PASSWORD}`)
+  console.log('Running at http://localhost:' + PORT)
+  console.log('Admin: http://localhost:' + PORT + '/admin')
+  console.log('Password: ' + ADMIN_PASSWORD)
   if (db) console.log('  \u6570\u636e\u5e93: PostgreSQL')
   else console.log('  \u6570\u636e\u5e93: \u672a\u8fde\u63a5')
 })
