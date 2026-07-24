@@ -584,12 +584,12 @@ async function loadAdminComments(status) {
       ? '<button class="approve-btn" onclick="updateComment(' + c.id + ','approved')">通过</button><button class="reject-btn" onclick="updateComment(' + c.id + ','rejected')">拒绝</button><button class="delete-btn" onclick="deleteComment(' + c.id + ')">删除</button>'
       : '<button class="delete-btn" onclick="deleteComment(' + c.id + ')">删除</button>'
     return '<div class="comment-mgt-item">' +
-      '<div class="cmt-article">' + escHtml(c.article_title || '') + '</div>' +
+      '<div class="cmt-article">' + escapeHtml(c.article_title || '') + '</div>' +
       '<div class="cmt-top">' +
-        '<div><span class="cmt-name">' + escHtml(c.name) + '</span> <span class="cmt-time">' + (c.created_at || '').substring(0, 10) + '</span></div>' +
+        '<div><span class="cmt-name">' + escapeHtml(c.name) + '</span> <span class="cmt-time">' + (c.created_at || '').substring(0, 10) + '</span></div>' +
         statusTag +
       '</div>' +
-      '<div class="cmt-content">' + escHtml(c.content) + '</div>' +
+      '<div class="cmt-content">' + escapeHtml(c.content) + '</div>' +
       '<div class="cmt-actions">' + actions + '</div>' +
     '</div>'
   }).join('')

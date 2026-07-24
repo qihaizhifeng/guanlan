@@ -342,6 +342,8 @@ function showDetail(post: BlogPost) {
   `
   document.getElementById('back-btn')!.addEventListener('click', showList)
   document.addEventListener('keydown', onKeyDown)
+  const submitBtn = document.getElementById("comment-submit")
+  if (submitBtn) submitBtn.onclick = (window as any).submitComment
   loadComments(post.id)
 }
 
