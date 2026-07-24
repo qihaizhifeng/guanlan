@@ -31,6 +31,7 @@ function checkRate(ip: string): boolean {
 }
 
 const app = express()
+app.disable('etag')
 app.use(cors())
 app.use(express.json({ limit: '2mb' }))
 

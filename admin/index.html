@@ -249,6 +249,7 @@ function api(path, opts = {}) {
   if (opts.body) {
     headers['Content-Type'] = 'application/json'
   }
+  headers['Cache-Control'] = 'no-cache, no-store'
   return fetch(path, { ...opts, headers }).then(r => {
     if (r.status === 401) { sessionStorage.removeItem('admin_token'); token = ''; showLogin(); return null }
     return r.json()
