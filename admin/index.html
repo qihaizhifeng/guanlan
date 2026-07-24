@@ -93,6 +93,35 @@ body{font-family:"Noto Sans SC","PingFang SC",sans-serif;background:#f8f6f3;colo
 .preview-blockquote{margin:1em 0;padding:0.5rem 1rem;border-left:3px solid #c4a882;background:#faf8f6;border-radius:0 4px 4px 0;color:#4a4a4a;font-size:0.85rem}
 .preview-list{margin:0.5em 0;padding-left:1.2em;font-size:0.85rem;line-height:1.8}
 .preview-link{color:#8b7355;text-decoration:underline;text-underline-offset:1px}
+
+.admin-tabs{display:flex;gap:0;margin-bottom:1.5rem;border-bottom:1px solid #e0e0e0}
+.admin-tab{padding:0.4rem 1.2rem;border:none;background:none;font-size:0.8rem;color:#888;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.2s;font-family:"Noto Sans SC",sans-serif}
+.admin-tab:hover{color:#333}
+.admin-tab.active{color:#1a1a1a;border-bottom-color:#1a1a1a}
+.comments-panel{display:none;max-width:800px;margin:0 auto;padding:0 2rem 4rem}
+.comments-panel-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:0.5rem}
+.comments-panel-header h3{font-family:"Noto Serif SC",serif;font-size:1rem}
+.comments-filter{display:flex;gap:0.3rem}
+.comments-filter-btn{font-size:0.7rem;padding:0.25rem 0.7rem;border:1px solid #d0cecb;border-radius:4px;background:#fff;color:#888;cursor:pointer;transition:all 0.2s;font-family:"Noto Sans SC",sans-serif}
+.comments-filter-btn:hover{border-color:#333;color:#333}
+.comments-filter-btn.active{background:#1a1a1a;border-color:#1a1a1a;color:#fff}
+.comment-mgt-item{padding:0.8rem 1rem;background:#fff;border:1px solid #e8e4df;border-radius:6px;margin-bottom:0.5rem}
+.comment-mgt-item .cmt-top{display:flex;justify-content:space-between;align-items:flex-start;gap:0.5rem;margin-bottom:0.3rem}
+.comment-mgt-item .cmt-article{font-size:0.7rem;color:#aaa;margin-bottom:0.2rem}
+.comment-mgt-item .cmt-name{font-weight:600;font-size:0.8rem;color:#333}
+.comment-mgt-item .cmt-time{font-size:0.65rem;color:#aaa}
+.comment-mgt-item .cmt-content{font-size:0.8rem;color:#555;line-height:1.6;margin:0.3rem 0}
+.comment-mgt-item .cmt-actions{display:flex;gap:0.3rem;margin-top:0.4rem}
+.comment-mgt-item .cmt-actions button{font-size:0.7rem;padding:0.2rem 0.6rem;border:1px solid #d0cecb;border-radius:4px;background:#fff;cursor:pointer;transition:all 0.2s}
+.comment-mgt-item .cmt-actions button:hover{border-color:#333}
+.comment-mgt-item .cmt-actions .approve-btn:hover{background:#27ae60;color:#fff;border-color:#27ae60}
+.comment-mgt-item .cmt-actions .reject-btn:hover{background:#e67e22;color:#fff;border-color:#e67e22}
+.comment-mgt-item .cmt-actions .delete-btn:hover{background:#c0392b;color:#fff;border-color:#c0392b}
+.comment-status-tag{font-size:0.65rem;padding:0.1rem 0.4rem;border-radius:3px}
+.comment-status-tag.pending{background:#fff3cd;color:#856404}
+.comment-status-tag.approved{background:#d4edda;color:#155724}
+.comment-status-tag.rejected{background:#f8d7da;color:#721c24}
+.pending-badge{background:#c0392b;color:#fff;font-size:0.6rem;padding:0.05rem 0.35rem;border-radius:8px;margin-left:0.2rem}
 </style>
 </head>
 <body>
@@ -109,6 +138,10 @@ body{font-family:"Noto Sans SC","PingFang SC",sans-serif;background:#f8f6f3;colo
   <div class="app-header">
     <h1>管理 · 观澜</h1>
     <a href="/" target="_blank">← 查看博客</a>
+  </div>
+  <div class="admin-tabs">
+    <button class="admin-tab active" data-tab="articles">文章</button>
+    <button class="admin-tab" data-tab="comments">评论 <span id="pending-count" style="font-weight:700;color:#c0392b"></span></button>
   </div>
   <div class="admin-layout">
     <div class="editor-pane">
@@ -246,6 +279,7 @@ async function handleLogin() {
     err.style.display = 'none'
     showApp()
     loadArticles()
+    updatePendingCount()
   } else {
     err.style.display = 'block'
   }
@@ -511,8 +545,84 @@ document.getElementById('edit-subtitle').addEventListener('input',updatePreview)
 document.getElementById('edit-date').addEventListener('input',updatePreview)
 document.getElementById('edit-category').addEventListener('change',updatePreview)
 document.getElementById('edit-content').addEventListener('input',updatePreview)
+// 标签切换
+document.querySelectorAll('.admin-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'))
+    tab.classList.add('active')
+    const pane = tab.dataset.tab
+    document.getElementById('comments-panel').style.display = pane === 'comments' ? '' : 'none'
+    document.querySelector('.admin-layout').style.display = pane === 'articles' ? '' : 'none'
+    if (pane === 'comments') loadAdminComments()
+  })
+})
+
+// 评论管理筛选切换
+document.querySelectorAll('.comments-filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.comments-filter-btn').forEach(b => b.classList.remove('active'))
+    btn.classList.add('active')
+    loadAdminComments(btn.dataset.status)
+  })
+})
+
+let adminCommentStatus = ''
+
+async function loadAdminComments(status) {
+  adminCommentStatus = status || document.querySelector('.comments-filter-btn.active')?.dataset?.status || 'pending'
+  const list = document.getElementById('comments-list')
+  list.innerHTML = '<div class="comments-empty">加载中...</div>'
+  const url = '/api/admin/comments' + (adminCommentStatus ? '?status=' + adminCommentStatus : '')
+  const data = await api(url)
+  if (!data || data.length === 0) {
+    list.innerHTML = '<div class="comments-empty">无评论</div>'
+    return
+  }
+  list.innerHTML = data.map(c => {
+    const statusTag = '<span class="comment-status-tag ' + c.status + '">' + statusLabel(c.status) + '</span>'
+    const actions = c.status === 'pending'
+      ? '<button class="approve-btn" onclick="updateComment(' + c.id + ','approved')">通过</button><button class="reject-btn" onclick="updateComment(' + c.id + ','rejected')">拒绝</button><button class="delete-btn" onclick="deleteComment(' + c.id + ')">删除</button>'
+      : '<button class="delete-btn" onclick="deleteComment(' + c.id + ')">删除</button>'
+    return '<div class="comment-mgt-item">' +
+      '<div class="cmt-article">' + escHtml(c.article_title || '') + '</div>' +
+      '<div class="cmt-top">' +
+        '<div><span class="cmt-name">' + escHtml(c.name) + '</span> <span class="cmt-time">' + (c.created_at || '').substring(0, 10) + '</span></div>' +
+        statusTag +
+      '</div>' +
+      '<div class="cmt-content">' + escHtml(c.content) + '</div>' +
+      '<div class="cmt-actions">' + actions + '</div>' +
+    '</div>'
+  }).join('')
+}
+
+function statusLabel(s) {
+  return s === 'approved' ? '已通过' : s === 'rejected' ? '已拒绝' : '待审核'
+}
+
+async function updateComment(id, status) {
+  const res = await api('/api/admin/comments/' + id, { method: 'PUT', body: JSON.stringify({ status }) })
+  if (res) loadAdminComments(adminCommentStatus)
+}
+
+async function deleteComment(id) {
+  if (!confirm('确定删除该评论？')) return
+  const res = await api('/api/admin/comments/' + id, { method: 'DELETE' })
+  if (res) loadAdminComments(adminCommentStatus)
+}
+
+// 快速显示待审核数
+async function updatePendingCount() {
+  try {
+    const data = await api('/api/admin/comments?status=pending')
+    const el = document.getElementById('pending-count')
+    if (data && data.length > 0) el.textContent = data.length
+  } catch {}
+}
+
 // 自动登录
 if (token) {
+  updatePendingCount()
+}
   showApp()
   loadArticles()
 }

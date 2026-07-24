@@ -221,6 +221,75 @@ function renderAllParagraphs(text: string): string {
   return html
 }
 
+let currentArticleId = 0
+
+async function loadComments(articleId: number) {
+  currentArticleId = articleId
+  try {
+    const res = await fetch('/api/comments/' + articleId)
+    if (!res.ok) return
+    const comments = await res.json()
+    const list = document.getElementById('comment-list')!
+    const count = document.getElementById('comment-count')!
+    count.textContent = String(comments.length)
+    if (comments.length === 0) {
+      list.innerHTML = '<p class="comment-empty">\u6682\u65e0\u8bc4\u8bba</p>'
+      return
+    }
+    list.innerHTML = comments.map((c: any) =>
+      '<div class="comment-item">' +
+        '<div class="comment-meta">' +
+          '<span class="comment-name">' + escHtml(c.name) + '</span>' +
+          '<span class="comment-time">' + fmtTime(c.created_at) + '</span>' +
+        '</div>' +
+        '<div class="comment-text">' + escHtml(c.content) + '</div>' +
+      '</div>'
+    ).join('')
+  } catch {}
+}
+
+function escHtml(t: string): string {
+  const d = document.createElement('div')
+  d.textContent = t
+  return d.innerHTML
+}
+
+function fmtTime(t: string): string {
+  try { const d = new Date(t); return d.getFullYear() + '\u5e74' + (d.getMonth() + 1) + '\u6708' + d.getDate() + '\u65e5' } catch { return t }
+}
+
+(window as any).submitComment = async function() {
+  const name = (document.getElementById('comment-name') as HTMLInputElement).value.trim()
+  const email = (document.getElementById('comment-email') as HTMLInputElement).value.trim()
+  const content = (document.getElementById('comment-content') as HTMLTextAreaElement).value.trim()
+  const status = document.getElementById('comment-status')!
+  const btn = document.getElementById('comment-submit') as HTMLButtonElement
+  if (!name) { status.textContent = '\u8bf7\u586b\u5199\u6635\u79f0'; return }
+  if (!content) { status.textContent = '\u8bf7\u586b\u5199\u8bc4\u8bba\u5185\u5bb9'; return }
+  btn.disabled = true; btn.textContent = '\u63d0\u4ea4\u4e2d...'
+  try {
+    const res = await fetch('/api/comments', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ article_id: currentArticleId, name, email, content }) })
+    const data = await res.json()
+    if (data.success) {
+      status.textContent = '\u8bc4\u8bba\u5df2\u63d0\u4ea4\uff0c\u5ba1\u6838\u901a\u8fc7\u540e\u5c06\u663e\u793a\u5728\u8fd9\u91cc'
+      status.className = 'comment-status success'
+      ;(document.getElementById('comment-name') as HTMLInputElement).value = ''
+      ;(document.getElementById('comment-content') as HTMLTextAreaElement).value = ''
+      ;(document.getElementById('comment-char-count') as HTMLSpanElement).textContent = '0/2000'
+    } else { status.textContent = data.error || '\u63d0\u4ea4\u5931\u8d25'; status.className = 'comment-status error' }
+  } catch { status.textContent = '\u7f51\u7edc\u9519\u8bef'; status.className = 'comment-status error' }
+  btn.disabled = false; btn.textContent = '\u53d1\u8868\u8bc4\u8bba'
+}
+
+document.addEventListener('input', (e) => {
+  const target = e.target as HTMLElement
+  if (target.id === 'comment-content') {
+    const len = (target as HTMLTextAreaElement).value.length
+    const el = document.getElementById('comment-char-count')
+    if (el) el.textContent = len + '/2000'
+  }
+})
+
 function showDetail(post: BlogPost) {
   currentView = 'detail'
   const grid = document.getElementById('article-grid')!
@@ -253,9 +322,27 @@ function showDetail(post: BlogPost) {
     <div class="detail-body">
       ${renderAllParagraphs(post.content)}
     </div>
+    <section class="comment-section">
+      <h3 class="comment-heading">评论 <span class="comment-count" id="comment-count">0</span></h3>
+      <div class="comment-list" id="comment-list"></div>
+      <div class="comment-form-wrap">
+        <p class="comment-form-title">发表评论</p>
+        <div class="comment-form-row">
+          <input type="text" id="comment-name" placeholder="昵称" maxlength="30" required />
+          <input type="email" id="comment-email" placeholder="邮箱（选填，用于头像）" />
+        </div>
+        <textarea id="comment-content" placeholder="写下你的评论..." maxlength="2000" required></textarea>
+        <div class="comment-form-actions">
+          <span class="comment-char-count" id="comment-char-count">0/2000</span>
+          <button class="comment-submit" id="comment-submit">发表评论</button>
+        </div>
+        <p class="comment-status" id="comment-status"></p>
+      </div>
+    </section>
   `
   document.getElementById('back-btn')!.addEventListener('click', showList)
   document.addEventListener('keydown', onKeyDown)
+  loadComments(post.id)
 }
 
 function showList() {
