@@ -587,9 +587,9 @@ document.querySelectorAll('.comments-filter-btn').forEach(btn => {
 let adminCommentStatus = ''
 
 async function loadAdminComments(status) {
-  try {
-  adminCommentStatus = status || document.querySelector('.comments-filter-btn.active')?.dataset?.status || 'pending'
+  adminCommentStatus = status || document.querySelector('.comments-filter-btn.active')?.dataset?.status || ''
   const list = document.getElementById('comments-list')
+  if (!list) return
   list.innerHTML = '<div class="comments-empty">加载中...</div>'
   const url = '/api/admin/comments' + (adminCommentStatus ? '?status=' + adminCommentStatus : '')
   const data = await api(url)
@@ -597,24 +597,17 @@ async function loadAdminComments(status) {
     list.innerHTML = '<div class="comments-empty">无评论</div>'
     return
   }
-  console.log('Comments data:', JSON.stringify(data))
-  list.innerHTML = '<div style="padding:0.5rem;font-size:0.75rem;color:#888;word-break:break-all">Raw: ' + JSON.stringify(data).substring(0,500) + '</div>'
-  list.innerHTML = data.map(c => {
-    const statusTag = '<span class="comment-status-tag ' + c.status + '">' + statusLabel(c.status) + '</span>'
-    const actions = c.status === 'pending'
-      ? '<button class="approve-btn" onclick="updateComment(' + c.id + ',\'approved\')">通过</button><button class="reject-btn" onclick="updateComment(' + c.id + ',\'rejected\')">拒绝</button><button class="delete-btn" onclick="deleteComment(' + c.id + ')">删除</button>'
-      : '<button class="delete-btn" onclick="deleteComment(' + c.id + ')">删除</button>'
-    return '<div class="comment-mgt-item">' +
-      '<div class="cmt-article">' + escapeHtml(c.article_title || '') + '</div>' +
-      '<div class="cmt-top">' +
-        '<div><span class="cmt-name">' + escapeHtml(c.name) + '</span> <span class="cmt-time">' + (c.created_at || '').substring(0, 10) + '</span></div>' +
-        statusTag +
-      '</div>' +
-      '<div class="cmt-content">' + escapeHtml(c.content) + '</div>' +
-      '<div class="cmt-actions">' + actions + '</div>' +
-    '</div>'
-  }).join('')
-  } catch(e) { console.error('Comments error:', e); document.getElementById('comments-list').innerHTML = '<div class="comments-empty">Error: ' + e.message + '</div>' }
+  try {
+    list.innerHTML = data.map(function(c) {
+      const tag = '<span class="comment-status-tag ' + c.status + '">' + (c.status === 'approved' ? '已通过' : c.status === 'rejected' ? '已拒绝' : '待审核') + '</span>'
+      const btns = c.status === 'pending'
+        ? '<button class="approve-btn" onclick="updateComment(' + c.id + ','approved')">通过</button><button class="reject-btn" onclick="updateComment(' + c.id + ','rejected')">拒绝</button><button class="delete-btn" onclick="deleteComment(' + c.id + ')">删除</button>'
+        : '<button class="delete-btn" onclick="deleteComment(' + c.id + ')">删除</button>'
+      return '<div class="comment-mgt-item"><div class="cmt-article">' + (c.article_title || '') + '</div><div class="cmt-top"><div><span class="cmt-name">' + c.name + '</span> <span class="cmt-time">' + (c.created_at||'').substring(0,10) + '</span></div>' + tag + '</div><div class="cmt-content">' + c.content + '</div><div class="cmt-actions">' + btns + '</div></div>'
+    }).join('')
+  } catch(e) {
+    list.innerHTML = '<div class="comments-empty">Error: ' + e.message + '</div>'
+  }
 }
 
 function statusLabel(s) {
