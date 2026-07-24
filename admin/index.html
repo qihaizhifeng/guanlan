@@ -580,6 +580,8 @@ async function loadAdminComments(status) {
     list.innerHTML = '<div class="comments-empty">无评论</div>'
     return
   }
+  console.log('Comments data:', JSON.stringify(data))
+  list.innerHTML = '<div style="padding:0.5rem;font-size:0.75rem;color:#888;word-break:break-all">Raw: ' + JSON.stringify(data).substring(0,500) + '</div>'
   list.innerHTML = data.map(c => {
     const statusTag = '<span class="comment-status-tag ' + c.status + '">' + statusLabel(c.status) + '</span>'
     const actions = c.status === 'pending'
