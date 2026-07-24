@@ -569,6 +569,7 @@ document.querySelectorAll('.comments-filter-btn').forEach(btn => {
 let adminCommentStatus = ''
 
 async function loadAdminComments(status) {
+  try {
   adminCommentStatus = status || document.querySelector('.comments-filter-btn.active')?.dataset?.status || 'pending'
   const list = document.getElementById('comments-list')
   list.innerHTML = '<div class="comments-empty">加载中...</div>'
@@ -593,6 +594,7 @@ async function loadAdminComments(status) {
       '<div class="cmt-actions">' + actions + '</div>' +
     '</div>'
   }).join('')
+  } catch(e) { console.error('Comments error:', e); document.getElementById('comments-list').innerHTML = '<div class="comments-empty">Error: ' + e.message + '</div>' }
 }
 
 function statusLabel(s) {
