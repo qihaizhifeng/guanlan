@@ -569,7 +569,7 @@ document.querySelectorAll('.admin-tab').forEach(tab => {
     document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'))
     tab.classList.add('active')
     const pane = tab.dataset.tab
-    document.getElementById('comments-panel').style.display = pane === 'comments' ? '' : 'none'
+    document.getElementById('comments-panel').style.display = pane === 'comments' ? 'block' : 'none'
     document.querySelector('.admin-layout').style.display = pane === 'articles' ? '' : 'none'
     if (pane === 'comments') loadAdminComments()
   })
