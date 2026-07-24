@@ -626,5 +626,21 @@ if (token) {
   loadArticles()
 }
 </script>
+
+<div class="comments-panel" id="comments-panel" style="display:none">
+  <div class="comments-panel-header">
+    <h3>评论管理</h3>
+    <div class="comments-filter">
+      <button class="comments-filter-btn active" data-status="pending">待审核</button>
+      <button class="comments-filter-btn" data-status="approved">已通过</button>
+      <button class="comments-filter-btn" data-status="rejected">已拒绝</button>
+      <button class="comments-filter-btn" data-status="">全部</button>
+    </div>
+  </div>
+  <div class="comments-list" id="comments-list">
+    <div class="comments-empty">加载中...</div>
+  </div>
+</div>
+
 </body>
 </html>
