@@ -329,7 +329,7 @@ function showDetail(post: BlogPost) {
         <p class="comment-form-title">发表评论</p>
         <div class="comment-form-row">
           <input type="text" id="comment-name" placeholder="昵称" maxlength="30" required />
-          <input type="email" id="comment-email" placeholder="邮箱（选填，用于头像）" />
+          <input type="email" id="comment-email" placeholder="邮箱（选填）" />
         </div>
         <textarea id="comment-content" placeholder="写下你的评论..." maxlength="2000" required></textarea>
         <div class="comment-form-actions">

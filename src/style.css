@@ -899,7 +899,8 @@ body {
 
 .comment-form-row {
   display: flex;
-  gap: 0.8rem;
+  flex-direction: column;
+  gap: 0.5rem;
   margin-bottom: 0.8rem;
 }
 
