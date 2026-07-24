@@ -241,7 +241,7 @@ body{font-family:"Noto Sans SC","PingFang SC",sans-serif;background:#f8f6f3;colo
 </div>
 <div class="comments-panel" id="comments-panel" style="display:none">
   <div class="comments-panel-header">
-    <h3>评论管理 <span id="test-status" style="font-size:0.7rem;color:#aaa;font-weight:400">(testing...)</span></h3>
+    <h3>评论管理</h3>
     <div class="comments-filter">
       <button class="comments-filter-btn active" data-status="">全部</button>
       <button class="comments-filter-btn" data-status="pending">待审核</button>
@@ -634,21 +634,20 @@ async function updatePendingCount() {
   } catch {}
 }
 
-document.getElementById('test-status').textContent = 'JS loaded'
-async function testAPI() {
-  document.getElementById('test-status').textContent = 'calling API...'
+ {
+  
   try {
     const res = await fetch('/api/admin/comments', {
       headers: { 'Authorization': 'Bearer ' + token }
     })
-    document.getElementById('test-status').textContent = 'Status: ' + res.status
+    
     const text = await res.text()
-    document.getElementById('test-status').textContent = 'Got: ' + text.substring(0, 100)
+    
   } catch(e) {
-    document.getElementById('test-status').textContent = 'Error: ' + e.message
+    
   }
 }
-testAPI()
+
 
 // 自动登录
 if (token) {
