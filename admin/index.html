@@ -601,7 +601,7 @@ async function loadAdminComments(status) {
     list.innerHTML = data.map(function(c) {
       const tag = '<span class="comment-status-tag ' + c.status + '">' + (c.status === 'approved' ? '已通过' : c.status === 'rejected' ? '已拒绝' : '待审核') + '</span>'
       const btns = c.status === 'pending'
-        ? '<button class="approve-btn" onclick="updateComment(' + c.id + ','approved')">通过</button><button class="reject-btn" onclick="updateComment(' + c.id + ','rejected')">拒绝</button><button class="delete-btn" onclick="deleteComment(' + c.id + ')">删除</button>'
+        ? '<button class="approve-btn" onclick="updateComment(' + c.id + ",'approved')" + '">通过</button><button class="reject-btn" onclick="updateComment(' + c.id + ",'rejected')" + '">拒绝</button><button class="delete-btn" onclick="deleteComment(' + c.id + ')">删除</button>'
         : '<button class="delete-btn" onclick="deleteComment(' + c.id + ')">删除</button>'
       return '<div class="comment-mgt-item"><div class="cmt-article">' + (c.article_title || '') + '</div><div class="cmt-top"><div><span class="cmt-name">' + c.name + '</span> <span class="cmt-time">' + (c.created_at||'').substring(0,10) + '</span></div>' + tag + '</div><div class="cmt-content">' + c.content + '</div><div class="cmt-actions">' + btns + '</div></div>'
     }).join('')
